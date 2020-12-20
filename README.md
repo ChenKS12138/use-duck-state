@@ -1,8 +1,6 @@
 # use-duck-state
 
-![Build](https://github.com/ChenKS12138/use-duck-state/workflows/Build/badge.svg)
-
-![Language](https://img.shields.io/badge/language-typescript-blue.svg?label=language)
+![Build](https://github.com/ChenKS12138/use-duck-state/workflows/Build/badge.svg) ![Language](https://img.shields.io/badge/language-typescript-blue.svg?label=language) [![npm version](https://badge.fury.io/js/use-duck-state.svg)](https://badge.fury.io/js/use-duck-state)
 
 A React Hooks Library To Manage Component State.
 
@@ -11,6 +9,9 @@ A React Hooks Library To Manage Component State.
 ## Example
 
 ![example](https://github.com/ChenKS12138/use-duck-state/raw/master/images/example.gif)
+
+
+<a href="https://codesandbox.io/s/couter-example-woy5l?file=/src/App.tsx" ><img src="https://codesandbox.io/static/img/play-codesandbox.svg" /></a>
 
 ## Usage
 
