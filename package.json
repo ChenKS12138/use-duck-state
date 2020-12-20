@@ -1,0 +1,29 @@
+{
+  "name": "use-duck-state",
+  "version": "0.1.1",
+  "main": "dist/index.js",
+  "author": {
+    "email": "chen749923710@gmail.com",
+    "name": "ChenKS12138",
+    "url": "https://ChenKS12138.github.io"
+  },
+  "repository": {
+    "url": "https://github.com/ChenKS12138/use-duck-state",
+    "directory": "/"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run build:module && npm run build:declaration",
+    "build:module": "rm -rf ./dist  && parcel build lib/index.ts -d dist --no-source-maps --no-cache",
+    "build:declaration": "dts-bundle-generator  -o dist/index.d.ts lib/index.ts"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/node": "^14.14.14",
+    "dts-bundle-generator": "^5.5.0",
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^4.0.3"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "sourceMap": true,
+    "module": "commonjs",
+    "target": "ES2020",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "paths": {
+      "~*": ["./src/*"]
+    },
+    "esModuleInterop": true
+  },
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

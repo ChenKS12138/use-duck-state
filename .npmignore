@@ -1,0 +1,11 @@
+node_modules/
+examples/
+.cache/
+images/
+.github/
+.git/
+lib/
+.gitignore
+.babelrc
+tsconfig.json
+tslint.json
