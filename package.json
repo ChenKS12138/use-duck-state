@@ -1,6 +1,6 @@
 {
   "name": "use-duck-state",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "source": "lib/index.ts",
   "main": "./dist/use-duck-state.js",
   "module": "./dist/use-duck-state.esm.js",
