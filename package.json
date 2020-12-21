@@ -6,6 +6,7 @@
   "module": "./dist/use-duck-state.esm.js",
   "unpkg": "./dist/use-duck-state.umd.js",
   "exports": "./dist/use-duck-state.modern.js",
+  "types": "./dist/index.d.ts",
   "isLibrary": true,
   "author": {
     "email": "chen749923710@gmail.com",
