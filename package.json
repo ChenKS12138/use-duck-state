@@ -1,16 +1,13 @@
 {
   "name": "use-duck-state",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/index.js",
   "author": {
     "email": "chen749923710@gmail.com",
     "name": "ChenKS12138",
     "url": "https://ChenKS12138.github.io"
   },
-  "repository": {
-    "url": "https://github.com/ChenKS12138/use-duck-state",
-    "directory": "/"
-  },
+  "repository": "https://github.com/ChenKS12138/use-duck-state",
   "license": "MIT",
   "scripts": {
     "build": "npm run build:module && npm run build:declaration",
