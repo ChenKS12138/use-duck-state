@@ -1,7 +1,12 @@
 {
   "name": "use-duck-state",
   "version": "0.1.2",
-  "main": "dist/index.js",
+  "source": "lib/index.ts",
+  "main": "./dist/use-duck-state.cjm.js",
+  "module": "./dist/use-duck-state.esm.js",
+  "unpkg": "./dist/use-duck-state.umd.js",
+  "exports": "./dist/use-duck-state.modern.js",
+  "isLibrary": true,
   "author": {
     "email": "chen749923710@gmail.com",
     "name": "ChenKS12138",
@@ -10,17 +15,14 @@
   "repository": "https://github.com/ChenKS12138/use-duck-state",
   "license": "MIT",
   "scripts": {
-    "build": "npm run build:module && npm run build:declaration",
-    "build:module": "rm -rf ./dist  && parcel build lib/index.ts -d dist --no-source-maps --no-cache",
-    "build:declaration": "dts-bundle-generator  -o dist/index.d.ts lib/index.ts"
+    "build": "rm -rf ./dist && microbundle --no-sourcemap"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-typescript": "^7.10.4",
     "@types/node": "^14.14.14",
-    "dts-bundle-generator": "^5.5.0",
-    "parcel-bundler": "^1.12.4",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "microbundle": "^0.12.4"
   }
 }
