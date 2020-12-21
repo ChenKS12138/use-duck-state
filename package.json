@@ -2,7 +2,7 @@
   "name": "use-duck-state",
   "version": "0.1.3",
   "source": "lib/index.ts",
-  "main": "./dist/use-duck-state.cjm.js",
+  "main": "./dist/use-duck-state.js",
   "module": "./dist/use-duck-state.esm.js",
   "unpkg": "./dist/use-duck-state.umd.js",
   "exports": "./dist/use-duck-state.modern.js",
