@@ -100,7 +100,7 @@ export abstract class Duck {
         return accumulate;
       }, Object.create(null) as STATE_OF_REDUCERS<T>);
   }
-  *saga(): Generator<any, void, any> {}
+  abstract saga(): Generator<any, void, any>;
 }
 
 /**
