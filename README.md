@@ -10,7 +10,6 @@ A React Hooks Library To Manage Component State.
 
 ![example](https://github.com/ChenKS12138/use-duck-state/raw/master/images/example.gif)
 
-
 <a href="https://codesandbox.io/s/couter-example-woy5l?file=/src/App.tsx" ><img src="https://codesandbox.io/static/img/play-codesandbox.svg" /></a>
 
 ## Usage
@@ -78,7 +77,6 @@ class AppDuck extends Duck {
 function App() {
   const { dispatch, duck, store } = useDuckState(AppDuck);
   const { count, doubleCount } = duck.selectors(store);
-
   return (
     <div>
       <button
