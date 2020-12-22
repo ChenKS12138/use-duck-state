@@ -14,7 +14,7 @@ export function createDuckStateHook({
   createSagaMiddleware,
 }) {
   return function useDuckState<TDuck extends Duck>(
-    MyDuck: new () => TDuck
+    MyDuck: new (args?: any) => TDuck
   ): { store: any; dispatch: (action: any) => void; duck: TDuck } {
     const duckRef = useRef(new MyDuck());
     const sagaMiddlewareRef = useRef(createSagaMiddleware());
@@ -49,6 +49,7 @@ export function createDuckStateHook({
         : duckRef.current.reducer,
       duckRef.current.initialState
     );
+    // console.log(duckRef.current.initialState);
     const storeRef = useRef(
       (function () {
         let _state = state;
@@ -69,11 +70,14 @@ export function createDuckStateHook({
     }, [state, storeRef]);
 
     useEffect(() => {
-      const task = sagaMiddlewareRef.current.run(
-        duckRef.current.saga.bind(duckRef.current)
-      );
+      const tasks = duckRef.current._composeSaga.map((saga) => {
+        return sagaMiddlewareRef.current.run(saga);
+      });
+
       return () => {
-        task.cancel();
+        tasks.forEach((task) => {
+          task.cancel();
+        });
       };
     }, []);
 
