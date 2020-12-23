@@ -1,6 +1,6 @@
 import { createToPayload } from "../../../lib";
 import { Duck, reduceFromPayload } from "./util";
-import { takeLatest, select, fork, put } from "redux-saga/effects";
+import { takeLatest, select, fork } from "redux-saga/effects";
 
 import CutdownDuck from "./cutdown.duck";
 
@@ -48,14 +48,7 @@ export default class AppDuck extends Duck {
     const { types, selectors } = this;
     yield takeLatest([types.SET_COUNT], function* (action) {
       const { count } = selectors(yield select());
-      yield put({ type: types.TEST });
       console.log(`types.SET_COUNT changed, now count is ${count}`, action);
-    });
-  }
-  *watchTest() {
-    const { types } = this;
-    yield takeLatest([types.TEST], function* () {
-      console.log("in test");
     });
   }
 }

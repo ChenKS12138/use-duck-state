@@ -1,7 +1,7 @@
 import { h } from "preact";
-import { useCallback } from "preact/compat";
 import AppDuck from "./App.duck";
 import { useDuckState, DuckProps } from "./util";
+import "./app.css";
 
 import CutdownDuck from "./cutdown.duck";
 
@@ -16,26 +16,29 @@ function App() {
 
   return (
     <div>
-      <div>
-        <button
-          onClick={() => {
-            dispatch(duck.creators.setCount(count - 1));
-          }}
-        >
-          {"-"}
-        </button>
-        <span>{count}</span>
-        <button
-          onClick={() => {
-            dispatch(duck.creators.setCount(count + 1));
-          }}
-        >
-          {"+"}
-        </button>
-        <div>double count is: {doubleCount}</div>
+      <div className="counter">
+        <div>
+          <button
+            onClick={() => {
+              dispatch(duck.creators.setCount(count - 1));
+            }}
+          >
+            {"-"}
+          </button>
+          <span>{count}</span>
+          <button
+            onClick={() => {
+              dispatch(duck.creators.setCount(count + 1));
+            }}
+          >
+            {"+"}
+          </button>
+        </div>
+        <div className="tip">Double Count Is: {doubleCount}</div>
       </div>
-      <div>
+      <div className="cutdown">
         <Cutdown dispatch={dispatch} duck={duck.ducks.cutdown} store={store} />
+        <div className="tip">Press Reset To Invoke Cutdown</div>
       </div>
     </div>
   );
@@ -48,7 +51,7 @@ function Cutdown({ dispatch, duck, store }: DuckProps<CutdownDuck>) {
   const { second } = duck.selectors(store);
   return (
     <div>
-      <span>{second}</span>
+      <span>Rest: {second}s </span>
       <button
         disabled={second > 0}
         onClick={() => {

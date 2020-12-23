@@ -29,6 +29,7 @@ export default class CutdownDuck extends Duck {
   }
   *saga() {
     yield fork([this, this.watchToReset]);
+    yield fork([this, this.watchToInvoke]);
   }
   *watchToReset() {
     const { types, creators } = this;
@@ -40,9 +41,18 @@ export default class CutdownDuck extends Duck {
     });
   }
   *watchToInvoke() {
-    const { types } = this;
+    const { types, selectors, createCutdownChannel } = this;
     yield takeLatest([types.INVOKE], function* () {
-      console.log("invoke");
+      const { second } = selectors(yield select());
+      const chan = createCutdownChannel(second);
+      let rest: number = second;
+      while (rest > 0) {
+        rest = (yield take(chan)) - 1;
+        yield put({
+          type: types.SET_SECOND,
+          payload: rest,
+        });
+      }
     });
   }
   createCutdownChannel(second: number): EventChannel<number> {
@@ -50,11 +60,11 @@ export default class CutdownDuck extends Duck {
       let rest = second;
       const timer = setInterval(() => {
         emit(rest--);
-        console.log(rest);
+        if (rest < 1) {
+          clearInterval(timer);
+        }
       }, 1000);
-      return () => {
-        clearInterval(timer);
-      };
+      return () => {};
     });
   }
 }
