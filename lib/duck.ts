@@ -154,10 +154,7 @@ export abstract class Duck {
     type Self = this;
     const selfDuck = this;
     const childrenDuck = Object.values(this.ducks);
-    return function (
-      state: STATE_OF_REDUCERS<Self["reducers"]>,
-      action: any
-    ): STATE_OF_REDUCERS<Self["reducers"]> & STATE_OF_DUCKS<Self["ducks"]> {
+    return function (state: STATE_OF_REDUCERS<Self["reducers"]>, action: any) {
       return {
         ...selfDuck._makeReducer(state, action),
         ...childrenDuck
@@ -172,8 +169,7 @@ export abstract class Duck {
       };
     };
   }
-  get initialState(): STATE_OF_REDUCERS<this["reducers"]> &
-    STATE_OF_DUCKS<this["ducks"]> {
+  get initialState() {
     return {
       ...this._makeState(this.reducers),
       ...Object.entries(this.ducks)
