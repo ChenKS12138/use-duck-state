@@ -24,13 +24,22 @@ import {
 import createSagaMiddleware from "redux-saga";
 import { useEffect, useMemo, useState, useRef } from "react";
 
-export const useDuckState = createDuckStateHook({
-  createSagaMiddleware,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
+import { createLogger } from "redux-logger";
+
+const loggerMiddleware = createLogger({
+  collapsed: false,
 });
+
+const useDuckState = createDuckStateHook(
+  {
+    createSagaMiddleware,
+    useEffect,
+    useMemo,
+    useState,
+    useRef,
+  },
+  [loggerMiddleware]
+);
 
 class AppDuck extends Duck {
   get quickTypes() {

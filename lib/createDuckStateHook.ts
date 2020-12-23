@@ -5,14 +5,12 @@
  */
 
 import { Duck } from "./duck";
+import * as redux from "redux";
 
-export function createDuckStateHook({
-  useRef,
-  useMemo,
-  useEffect,
-  useState,
-  createSagaMiddleware,
-}) {
+export function createDuckStateHook(
+  { useRef, useMemo, useEffect, useState, createSagaMiddleware },
+  middlewares?: redux.Middleware[]
+) {
   const useStoreRef = createStoreRefHook({ useRef, useState });
   return function useDuckState<TDuck extends Duck>(
     MyDuck: new (args?: any) => TDuck
@@ -21,9 +19,7 @@ export function createDuckStateHook({
     const sagaMiddlewareRef = useRef(createSagaMiddleware());
 
     const storeRef = useStoreRef(
-      process.env.NODE_ENV === "development"
-        ? logger(duckRef.current.reducer)
-        : duckRef.current.reducer,
+      duckRef.current.reducer,
       duckRef.current.initialState
     );
 
@@ -42,7 +38,9 @@ export function createDuckStateHook({
     const nextStore = useMemo(() => {
       const nextStore = enhanceStore(
         storeRef.current,
-        sagaMiddlewareRef.current
+        middlewares?.length
+          ? [sagaMiddlewareRef.current, ...middlewares]
+          : [sagaMiddlewareRef.current]
       );
       return nextStore;
     }, [sagaMiddlewareRef, storeRef]);
@@ -55,7 +53,7 @@ export function createDuckStateHook({
   };
 }
 
-function enhanceStore(store, ...middlewares) {
+function enhanceStore(store, middlewares: redux.Middleware[]) {
   const chains = middlewares.map((middleware) =>
     middleware({
       getState: store.getState,
@@ -66,40 +64,6 @@ function enhanceStore(store, ...middlewares) {
     store.dispatch
   );
   return store;
-}
-
-const getCurrentTimeFormatted = () => {
-  const currentTime = new Date();
-  const hours = currentTime.getHours();
-  const minutes = currentTime.getMinutes();
-  const seconds = currentTime.getSeconds();
-  const milliseconds = currentTime.getMilliseconds();
-  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
-};
-
-function logger(next) {
-  return function (state, action) {
-    const nextState = next(state, action);
-    console.groupCollapsed(
-      `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
-      "color: black; font-weight: bold;",
-      "color: bl; font-weight: bold;",
-      "color: grey; font-weight: lighter;"
-    );
-    console.log(
-      "%cPrevious State:",
-      "color: #9E9E9E; font-weight: 700;",
-      state
-    );
-    console.log("%cAction:", "color: #00A7F7; font-weight: 700;", action);
-    console.log(
-      "%cNext State:",
-      "color: #47B04B; font-weight: 700;",
-      nextState
-    );
-    console.groupEnd();
-    return nextState;
-  };
 }
 
 function createStoreRefHook({ useRef, useState }) {

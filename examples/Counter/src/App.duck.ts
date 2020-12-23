@@ -48,7 +48,7 @@ export default class AppDuck extends Duck {
     const { types, selectors } = this;
     yield takeLatest([types.SET_COUNT], function* (action) {
       const { count } = selectors(yield select());
-      console.log(`types.SET_COUNT changed, now count is ${count}`, action);
+      console.log(`Type ${action.type} dispatched, now count is ${count}`);
     });
   }
 }
