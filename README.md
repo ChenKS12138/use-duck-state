@@ -22,13 +22,13 @@ import {
   createToPayload,
 } from "use-duck-state";
 import createSagaMiddleware from "redux-saga";
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 export const useDuckState = createDuckStateHook({
   createSagaMiddleware,
   useEffect,
   useMemo,
-  useReducer,
+  useState,
   useRef,
 });
 
