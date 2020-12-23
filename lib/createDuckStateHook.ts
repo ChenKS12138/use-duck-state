@@ -1,9 +1,3 @@
-/**
- * @author ChenKS12138
- * inspired from saga-duck
- * @see  https://github.com/cyrilluce/saga-duck
- */
-
 import { Duck } from "./duck";
 import * as redux from "redux";
 

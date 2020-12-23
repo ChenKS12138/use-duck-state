@@ -1,3 +1,8 @@
+/**
+ * @author ChenKS12138
+ * inspired from saga-duck
+ * @see  https://github.com/cyrilluce/saga-duck
+ */
 interface BASE_REDUCERS {
   [key: string]: (args?: any) => any;
 }
