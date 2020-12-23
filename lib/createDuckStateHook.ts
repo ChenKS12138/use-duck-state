@@ -20,53 +20,10 @@ export function createDuckStateHook({
     const sagaMiddlewareRef = useRef(createSagaMiddleware());
     const [state, dispatch] = useReducer(
       process.env.NODE_ENV === "development"
-        ? (currentState, action) => {
-            const next = duckRef.current.reducer(currentState, action);
-            console.groupCollapsed(
-              `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
-              "color: black; font-weight: bold;",
-              "color: bl; font-weight: bold;",
-              "color: grey; font-weight: lighter;"
-            );
-            console.log(
-              "%cPrevious State:",
-              "color: #9E9E9E; font-weight: 700;",
-              currentState
-            );
-            console.log(
-              "%cAction:",
-              "color: #00A7F7; font-weight: 700;",
-              action
-            );
-            console.log(
-              "%cNext State:",
-              "color: #47B04B; font-weight: 700;",
-              next
-            );
-            console.groupEnd();
-            return next;
-          }
+        ? logger(duckRef.current.reducer)
         : duckRef.current.reducer,
       duckRef.current.initialState
     );
-    const storeRef = useRef(
-      (function () {
-        let _state = state;
-        return {
-          dispatch,
-          getState() {
-            return _state;
-          },
-          updateState(nextState) {
-            _state = nextState;
-          },
-        };
-      })()
-    );
-
-    useEffect(() => {
-      storeRef.current.updateState(state);
-    }, [state, storeRef]);
 
     useEffect(() => {
       const task = sagaMiddlewareRef.current.run(
@@ -77,25 +34,41 @@ export function createDuckStateHook({
       };
     }, []);
 
-    storeRef.current.dispatch = dispatch;
+    const stateRef = useRef(state);
+    stateRef.current = state;
 
-    const enhancedDispatch = useMemo(
-      () => enhanceDispatch(storeRef.current, sagaMiddlewareRef.current),
-      [storeRef, sagaMiddlewareRef]
-    );
+    const nextStore = useMemo(() => {
+      const nextStore = enhanceStore(
+        {
+          getState() {
+            return stateRef.current;
+          },
+          dispatch,
+        },
+        sagaMiddlewareRef.current
+      );
+      return nextStore;
+    }, [sagaMiddlewareRef, dispatch, stateRef]);
 
     return {
       store: state,
       duck: duckRef.current,
-      dispatch: enhancedDispatch,
+      dispatch: nextStore.dispatch,
     };
   };
 }
 
-function enhanceDispatch(store, ...middlewares) {
-  return middlewares.reduceRight((dispach, middleware) => {
-    return middleware(store)(dispach);
-  }, store.dispatch);
+function enhanceStore(store, ...middlewares) {
+  const chains = middlewares.map((middleware) =>
+    middleware({
+      getState: store.getState,
+      dispatch: (action, ...args) => store.dispatch(action, ...args),
+    })
+  );
+  store.dispatch = chains.reduce((a, b) => (...args) => a(b(...args)))(
+    store.dispatch
+  );
+  return store;
 }
 
 const getCurrentTimeFormatted = () => {
@@ -106,3 +79,28 @@ const getCurrentTimeFormatted = () => {
   const milliseconds = currentTime.getMilliseconds();
   return `${hours}:${minutes}:${seconds}.${milliseconds}`;
 };
+
+function logger(next) {
+  return function (state, action) {
+    const nextState = next(state, action);
+    console.groupCollapsed(
+      `%cAction: %c${action.type} %cat ${getCurrentTimeFormatted()}`,
+      "color: black; font-weight: bold;",
+      "color: bl; font-weight: bold;",
+      "color: grey; font-weight: lighter;"
+    );
+    console.log(
+      "%cPrevious State:",
+      "color: #9E9E9E; font-weight: 700;",
+      state
+    );
+    console.log("%cAction:", "color: #00A7F7; font-weight: 700;", action);
+    console.log(
+      "%cNext State:",
+      "color: #47B04B; font-weight: 700;",
+      nextState
+    );
+    console.groupEnd();
+    return nextState;
+  };
+}
