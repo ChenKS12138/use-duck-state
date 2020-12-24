@@ -1,6 +1,6 @@
 # use-duck-state
 
-![Build](https://github.com/ChenKS12138/use-duck-state/workflows/Build/badge.svg) ![Language](https://img.shields.io/badge/language-typescript-blue.svg?label=language) [![npm version](https://badge.fury.io/js/use-duck-state.svg)](https://badge.fury.io/js/use-duck-state)
+![Build](https://github.com/ChenKS12138/use-duck-state/workflows/Build/badge.svg) ![Testing](https://github.com/ChenKS12138/use-duck-state/workflows/Testing/badge.svg) ![Language](https://img.shields.io/badge/language-typescript-blue.svg?label=language) [![npm version](https://badge.fury.io/js/use-duck-state.svg)](https://badge.fury.io/js/use-duck-state)
 
 A React Hooks Library To Manage Component State.
 

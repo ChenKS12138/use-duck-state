@@ -1,5 +1,3 @@
-import { Duck } from "./duck";
-
 /**
  * @param actionType
  * @param initialState

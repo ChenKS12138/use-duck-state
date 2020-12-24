@@ -30,7 +30,7 @@ const DUPLICATE_ATTRIBUTE_MSG =
 
 export abstract class Duck {
   State!: STATE_OF_REDUCERS<this["reducers"]>;
-  constructor(prefix: string) {
+  constructor(prefix?: string) {
     this._prefix = prefix;
     if (
       Object.keys({ ...this.quickDucks, ...this.reducers }).length !==
@@ -43,7 +43,7 @@ export abstract class Duck {
       }
     }
   }
-  _prefix: string;
+  private _prefix: string | undefined;
   private _cacheTypes: {
     readonly [P in keyof this["quickTypes"]]: string;
   } = undefined as any;
@@ -98,7 +98,9 @@ export abstract class Duck {
   get rawSelectors(): { [key: string]: (key: any) => any } {
     return {};
   }
-  get quickDucks(): { [key: string]: new (prefix: string) => Duck } {
+  get quickDucks(): {
+    [key: string]: any;
+  } {
     return {};
   }
   get types() {
