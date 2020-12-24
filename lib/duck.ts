@@ -29,7 +29,7 @@ const DUPLICATE_ATTRIBUTE_MSG =
   "quickDucks and reducers have duplicate attributes!";
 
 export abstract class Duck {
-  State: STATE_OF_REDUCERS<this["reducers"]>;
+  State!: STATE_OF_REDUCERS<this["reducers"]>;
   constructor(prefix: string) {
     this._prefix = prefix;
     if (
@@ -46,23 +46,23 @@ export abstract class Duck {
   _prefix: string;
   private _cacheTypes: {
     readonly [P in keyof this["quickTypes"]]: string;
-  };
+  } = undefined as any;
   private _cacheDucks: {
     readonly [P in keyof this["quickDucks"]]: InstanceType<
       this["quickDucks"][P]
     >;
-  };
+  } = undefined as any;
   private _makeReducer<TState extends object, TType = string>(
     state: TState,
     action: TType
   ): TState {
     return Object.entries(this.reducers)
       .map(([key, value]) => {
-        return [key, (value as any)(state[key], action)];
+        return [key, (value as any)((state as any)[key], action)];
       })
       .reduce((accumulate, current) => {
         const [key, value] = current;
-        accumulate[key] = value;
+        (accumulate as any)[key] = value;
         return accumulate;
       }, Object.create(null) as TState);
   }
@@ -159,7 +159,10 @@ export abstract class Duck {
         ...selfDuck._makeReducer(state, action),
         ...childrenDuck
           .map((duck) => {
-            return [duck._prefix, duck.reducer(state[duck._prefix], action)];
+            return [
+              duck._prefix,
+              duck.reducer((state as any)[duck._prefix], action),
+            ];
           })
           .reduce((accumulate, current) => {
             const [key, value] = current;

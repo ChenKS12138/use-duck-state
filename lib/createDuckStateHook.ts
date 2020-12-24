@@ -2,7 +2,19 @@ import { Duck } from "./duck";
 import * as redux from "redux";
 
 export function createDuckStateHook(
-  { useRef, useMemo, useEffect, useState, createSagaMiddleware },
+  {
+    useRef,
+    useMemo,
+    useEffect,
+    useState,
+    createSagaMiddleware,
+  }: {
+    useRef: any;
+    useMemo: any;
+    useEffect: any;
+    useState: any;
+    createSagaMiddleware: any;
+  },
   middlewares?: redux.Middleware[]
 ) {
   const useStoreRef = createStoreRefHook({ useRef, useState });
@@ -18,12 +30,12 @@ export function createDuckStateHook(
     );
 
     useEffect(() => {
-      const tasks = duckRef.current._composeSaga.map((saga) => {
+      const tasks = duckRef.current._composeSaga.map((saga: any) => {
         return sagaMiddlewareRef.current.run(saga);
       });
 
       return () => {
-        tasks.forEach((task) => {
+        tasks.forEach((task: any) => {
           task.cancel();
         });
       };
@@ -47,7 +59,7 @@ export function createDuckStateHook(
   };
 }
 
-function enhanceStore(store, middlewares: redux.Middleware[]) {
+function enhanceStore(store: any, middlewares: redux.Middleware[]) {
   const chains = middlewares.map((middleware) =>
     middleware({
       getState: store.getState,
@@ -60,12 +72,18 @@ function enhanceStore(store, middlewares: redux.Middleware[]) {
   return store;
 }
 
-function createStoreRefHook({ useRef, useState }) {
-  return function useStoreRef(reducer, initialState) {
+function createStoreRefHook({
+  useRef,
+  useState,
+}: {
+  useRef: any;
+  useState: any;
+}) {
+  return function useStoreRef(reducer: any, initialState: any) {
     const [_, forceUpdate] = useState({});
     const storeRef = useRef({
       _state: initialState,
-      dispatch(action) {
+      dispatch(action: any) {
         storeRef.current._state = reducer(storeRef.current._state, action);
         forceUpdate({});
       },

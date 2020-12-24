@@ -4,8 +4,9 @@
     "sourceMap": true,
     "module": "commonjs",
     "target": "ES2020",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true
   },
-  "include": ["lib/**/*.tsx", "lib/**/*.ts"],
+  "include": ["lib/**/*.ts"],
   "exclude": ["node_modules"]
 }
