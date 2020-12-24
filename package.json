@@ -17,7 +17,8 @@
   "license": "MIT",
   "scripts": {
     "build": "cross-env NODE_ENV=production rm -rf ./dist && microbundle --no-sourcemap",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
