@@ -1,7 +1,7 @@
 name: Testing
 on: [push]
 jobs:
-  build-and-deploy:
+  testing:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -16,8 +16,9 @@ jobs:
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          file: ./coverage/clover.xml # optional
+          file: ./coverage/coverage-final.json
+          directory: ./coverage
           flags: unittests # optional
           name: codecov-umbrella # optional
           fail_ci_if_error: true # optional (default = false)
-          verbose: true # optional (default = false)
+          # verbose: true # optional (default = false)
