@@ -1,5 +1,4 @@
-import { createToPayload } from "../../../lib";
-import { Duck, reduceFromPayload } from "./util";
+import { Duck, reduceFromPayload, createToPayload } from "./util";
 import { takeLatest, select, fork } from "redux-saga/effects";
 
 import CutdownDuck from "./cutdown.duck";

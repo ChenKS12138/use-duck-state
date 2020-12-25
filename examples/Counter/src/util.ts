@@ -1,4 +1,4 @@
-import { createDuckStateHook } from "../../../lib";
+import { createDuckStateHook } from "../../../src";
 
 import { useRef, useMemo, useEffect, useState } from "preact/compat";
 import createSagaMiddleware from "redux-saga";
@@ -13,7 +13,7 @@ export {
   createToPayload,
   Duck,
   DuckProps,
-} from "../../../lib";
+} from "../../../src";
 
 export const useDuckState = createDuckStateHook(
   {

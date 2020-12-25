@@ -4,7 +4,7 @@ examples/
 images/
 .github/
 .git/
-lib/
+src/
 .gitignore
 tsconfig.json
 tslint.json

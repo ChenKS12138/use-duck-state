@@ -1,7 +1,7 @@
 {
   "name": "use-duck-state",
   "version": "0.2.3",
-  "source": "./lib/index.ts",
+  "source": "./src/index.ts",
   "main": "./dist/use-duck-state.js",
   "module": "./dist/use-duck-state.esm.js",
   "unpkg": "./dist/use-duck-state.umd.js",

@@ -4,7 +4,7 @@
 
 A React Hooks Library To Manage Component State.
 
-`use-duck-state`是受[saga-duck](https://github.com/cyrilluce/saga-duck)启发的基于`redux-saga`和`hook`的组件状态管理的方案
+`use-duck-state`是受[saga-duck](https://github.com/cyrilluce/saga-duck)启发的基于`redux-saga`和`hooks`的组件状态管理的方案
 
 ## Example
 
