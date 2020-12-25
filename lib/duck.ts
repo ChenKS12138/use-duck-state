@@ -3,17 +3,17 @@
  * inspired from saga-duck
  * @see  https://github.com/cyrilluce/saga-duck
  */
-interface BASE_REDUCERS {
+type BASE_REDUCERS = {
   [key: string]: (args?: any) => any;
-}
+};
 
 type STATE_OF_REDUCERS<REDUCERS extends BASE_REDUCERS> = {
   [key in keyof REDUCERS]: ReturnType<REDUCERS[key]>;
 };
 
-interface BASE_DUCKS {
+type BASE_DUCKS = {
   [key: string]: Duck;
-}
+};
 
 type STATE_OF_DUCKS<DUCKS extends BASE_DUCKS> = {
   [key in keyof DUCKS]: DUCKS[key]["initialState"];
@@ -37,6 +37,7 @@ export abstract class Duck {
       Object.keys(this.quickDucks).length + Object.keys(this.reducers).length
     ) {
       if (process.env.NODE_ENV === "production") {
+        // tslint:disable-next-line: no-console
         console.error(DUPLICATE_ATTRIBUTE_MSG);
       } else {
         throw new Error(DUPLICATE_ATTRIBUTE_MSG);
@@ -130,10 +131,10 @@ export abstract class Duck {
     return this._cacheDucks;
   }
   get selectors() {
-    type Duck = this;
+    type duckSelf = this;
     const selfDuck = this;
     const _reducerKey = Object.keys(this.reducers);
-    return function (state: any) {
+    return (state: any) => {
       if (selfDuck._prefix && selfDuck._prefix in state) {
         state = state[selfDuck._prefix];
       }
@@ -148,15 +149,15 @@ export abstract class Duck {
           },
         });
       });
-      return newState as STATE_OF_REDUCERS<Duck["reducers"]> &
-        STATE_OF_REDUCERS<Duck["rawSelectors"]>;
+      return newState as STATE_OF_REDUCERS<duckSelf["reducers"]> &
+        STATE_OF_REDUCERS<duckSelf["rawSelectors"]>;
     };
   }
   get reducer() {
     type Self = this;
     const selfDuck = this;
     const childrenDuck = Object.values(this.ducks);
-    return function (state: STATE_OF_REDUCERS<Self["reducers"]>, action: any) {
+    return (state: STATE_OF_REDUCERS<Self["reducers"]>, action: any) => {
       return {
         ...selfDuck._makeReducer(state, action),
         ...childrenDuck

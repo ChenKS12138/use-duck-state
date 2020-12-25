@@ -1,3 +1,5 @@
+import { Duck } from "./duck";
+
 /**
  * @param actionType
  * @param initialState
@@ -6,10 +8,10 @@ export function reduceFromPayload<TState, TType = string>(
   actionType: TType,
   initialState: TState
 ) {
-  return function (
+  return (
     state: TState = initialState,
     aciton: { type: TType; payload: TState }
-  ) {
+  ) => {
     if (aciton.type === actionType) {
       return aciton.payload;
     }
@@ -21,12 +23,12 @@ export function reduceFromPayload<TState, TType = string>(
  * @param actionType
  */
 export function createToPayload<TState, TType = string>(actionType: TType) {
-  return function (
+  return (
     payload: TState
   ): {
     type: TType;
     payload: TState;
-  } {
+  } => {
     return {
       type: actionType,
       payload,
