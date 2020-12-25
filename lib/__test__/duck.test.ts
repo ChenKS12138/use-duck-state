@@ -1,3 +1,5 @@
+// tslint:disable: max-classes-per-file
+
 import { Duck } from "../duck";
 
 class SubDuck extends Duck {
@@ -21,7 +23,9 @@ class SubDuck extends Duck {
       },
     };
   }
-  *saga() {}
+  *saga() {
+    return null;
+  }
 }
 class TestDuck extends Duck {
   get quickTypes() {
@@ -65,7 +69,39 @@ class TestDuck extends Duck {
       sub2: SubDuck,
     };
   }
-  *saga() {}
+  *saga() {
+    return null;
+  }
+}
+
+class NamingConflictDuck extends Duck {
+  get quickTypes() {
+    enum Types {
+      SET_VALUE,
+    }
+    return {
+      ...Types,
+    };
+  }
+  get reducers() {
+    const { types } = this;
+    return {
+      conflictName(state = 0, action: { type: string; payload: number }) {
+        if (action.type === types.SET_VALUE) {
+          return action.payload;
+        }
+        return state;
+      },
+    };
+  }
+  get quickDucks() {
+    return {
+      conflictName: SubDuck,
+    };
+  }
+  *saga() {
+    return null;
+  }
 }
 
 describe("Class Duck", () => {
@@ -74,6 +110,33 @@ describe("Class Duck", () => {
     done();
   });
   const duck = new TestDuck();
+
+  describe("quickDucks and reducers conflict name check", () => {
+    it("when not in production mode", (done) => {
+      const prevNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "development";
+      expect(() => {
+        // tslint:disable-next-line: no-unused-expression
+        new NamingConflictDuck();
+      }).toThrowError("quickDucks and reducers have duplicate attributes!");
+      process.env.NODE_ENV = prevNodeEnv;
+      done();
+    });
+    it("when in production mode", (done) => {
+      const prevNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "production";
+      const spy = jest.spyOn(console, "error").mockImplementation();
+      // tslint:disable-next-line: no-unused-expression
+      new NamingConflictDuck();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenLastCalledWith(
+        "quickDucks and reducers have duplicate attributes!"
+      );
+      spy.mockRestore();
+      process.env.NODE_ENV = prevNodeEnv;
+      done();
+    });
+  });
 
   describe("instance's essential property", () => {
     it("_prefix", (done) => {

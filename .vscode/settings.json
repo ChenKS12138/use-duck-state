@@ -1,5 +1,5 @@
 {
   "tslint.enable": true,
   "tslint.packageManager": "yarn",
-  "tslint.run": "onSave"
+  "tslint.run": "onType"
 }

@@ -1,3 +1,5 @@
+// tslint:disable: max-classes-per-file
+
 import { createDuckStateHook } from "../createDuckStateHook";
 import { Duck } from "../duck";
 import React, { useState, useEffect, useRef, useMemo } from "react";
