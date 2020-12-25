@@ -139,6 +139,26 @@ describe("Class Duck", () => {
   });
 
   describe("instance's essential property", () => {
+    it("quickTypes", (done) => {
+      expect(duck.quickTypes).toBeInstanceOf(Object);
+      done();
+    });
+
+    it("reducers", (done) => {
+      expect(duck.reducers).toBeInstanceOf(Object);
+      done();
+    });
+
+    it("creators", (done) => {
+      expect(duck.creators).toBeInstanceOf(Object);
+      done();
+    });
+
+    it("quickDucks", (done) => {
+      expect(duck.quickDucks).toBeInstanceOf(Object);
+      done();
+    });
+
     it("_prefix", (done) => {
       expect(duck).toHaveProperty("_prefix", undefined);
       expect(duck.ducks.sub1).toHaveProperty("_prefix", "sub1");
@@ -175,6 +195,12 @@ describe("Class Duck", () => {
         const state = duck.selectors(store);
         expect(state).toHaveProperty("count", 3);
         expect(state).toHaveProperty("doubleCount", 6);
+        done();
+      });
+      it("read sub duck state ", (done) => {
+        const store = { count: 3, sub1: { second: 3 }, sub2: { second: 4 } };
+        expect(duck.ducks.sub1.selectors(store).second).toBe(3);
+        expect(duck.ducks.sub2.selectors(store).second).toBe(4);
         done();
       });
     });
