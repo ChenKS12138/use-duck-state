@@ -5,7 +5,7 @@ import createSagaMiddleware from "redux-saga";
 import { createLogger } from "redux-logger";
 
 const loggerMiddleware = createLogger({
-  collapsed: false,
+  collapsed: true,
 });
 
 export {
