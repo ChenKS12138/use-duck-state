@@ -19,7 +19,7 @@
     "rax-text": "^2.0.0",
     "rax-view": "^2.0.0",
     "redux-saga": "^1.1.3",
-    "use-duck-state": "^0.2.3"
+    "use-duck-state": "^0.3.0"
   },
   "devDependencies": {
     "@iceworks/spec": "^1.0.0",

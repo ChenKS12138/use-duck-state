@@ -1,18 +1,16 @@
 import { createElement } from 'rax';
-import View from 'rax-view';
-import Text from 'rax-text';
 import { DuckProps } from 'use-duck-state';
 import { useDuckState } from '@/utils';
 
 import styles from './index.module.css';
-import AppDuck from './index.duck';
+import HomeDuck from './index.duck';
 import CutdownDuck from './cutdown.duck';
 
 /**
  * page component
  */
 export default function Home() {
-  const { dispatch, duck, store } = useDuckState(AppDuck);
+  const { dispatch, duck, store } = useDuckState(HomeDuck, 'Home');
   const { count, doubleCount } = duck.selectors(store);
 
   return (

@@ -3,7 +3,7 @@ import { takeLatest, select, fork } from 'redux-saga/effects';
 
 import CutdownDuck from './cutdown.duck';
 
-export default class AppDuck extends Duck {
+export default class HomeDuck extends Duck {
   get quickTypes() {
     enum Type {
       SET_COUNT,
