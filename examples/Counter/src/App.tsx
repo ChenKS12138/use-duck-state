@@ -11,7 +11,7 @@ export default App;
  * page component
  */
 function App() {
-  const { dispatch, duck, store } = useDuckState(AppDuck);
+  const { dispatch, duck, store } = useDuckState(AppDuck, "app");
   const { count, doubleCount } = duck.selectors(store);
 
   return (

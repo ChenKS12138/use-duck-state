@@ -30,8 +30,8 @@ const DUPLICATE_ATTRIBUTE_MSG =
 
 export abstract class Duck {
   State!: STATE_OF_REDUCERS<this["reducers"]>;
-  constructor(prefix?: string) {
-    this._prefix = prefix;
+  constructor(prefix?: string[]) {
+    this._prefixs = prefix ?? [];
     if (
       Object.keys({ ...this.quickDucks, ...this.reducers }).length !==
       Object.keys(this.quickDucks).length + Object.keys(this.reducers).length
@@ -44,7 +44,7 @@ export abstract class Duck {
       }
     }
   }
-  private _prefix: string | undefined;
+  protected _prefixs: string[];
   private _cacheTypes: {
     readonly [P in keyof this["quickTypes"]]: string;
   } = undefined as any;
@@ -111,18 +111,20 @@ export abstract class Duck {
         .map(([key, _value]) => key)
         .reduce((accumulate, current) => {
           accumulate[current] =
-            (this._prefix ? this._prefix + "/" : "") + current;
+            (this._prefixs?.length ? this._prefixs.join("/") + "/" : "") +
+            current;
           return accumulate;
         }, Object.create(null));
     }
     return this._cacheTypes;
   }
   get ducks() {
+    const duckSelf = this;
     if (!this._cacheDucks) {
       this._cacheDucks = Object.entries(this.quickDucks).reduce(
         (accumulate, current) => {
           const [key, CurrentDuck] = current;
-          accumulate[key] = new CurrentDuck(key);
+          accumulate[key] = new CurrentDuck([...duckSelf._prefixs, key]);
           return accumulate;
         },
         Object.create(null)
@@ -135,9 +137,10 @@ export abstract class Duck {
     const selfDuck = this;
     const _reducerKey = Object.keys(this.reducers);
     return (state: any) => {
-      if (selfDuck._prefix && selfDuck._prefix in state) {
-        state = state[selfDuck._prefix];
-      }
+      state =
+        selfDuck?._prefixs?.reduce?.((accumulate: any, current: any) => {
+          return accumulate?.[current];
+        }, state) ?? state;
       const newState = Object.create(null);
       _reducerKey.forEach((key) => {
         newState[key] = state[key];
@@ -162,10 +165,8 @@ export abstract class Duck {
         ...selfDuck._makeReducer(state, action),
         ...childrenDuck
           .map((duck) => {
-            return [
-              duck._prefix,
-              duck.reducer((state as any)[duck._prefix], action),
-            ];
+            const key = duck._prefixs[duck._prefixs?.length - 1];
+            return [key, duck.reducer((state as any)[key], action)];
           })
           .reduce((accumulate, current) => {
             const [key, value] = current;

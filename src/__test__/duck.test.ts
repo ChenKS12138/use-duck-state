@@ -109,7 +109,7 @@ describe("Class Duck", () => {
     expect(TestDuck).toBeInstanceOf(Function);
     done();
   });
-  const duck = new TestDuck();
+  const duck = new TestDuck(["test"]);
 
   describe("quickDucks and reducers conflict name check", () => {
     it("when not in production mode", (done) => {
@@ -160,9 +160,9 @@ describe("Class Duck", () => {
     });
 
     it("_prefix", (done) => {
-      expect(duck).toHaveProperty("_prefix", undefined);
-      expect(duck.ducks.sub1).toHaveProperty("_prefix", "sub1");
-      expect(duck.ducks.sub2).toHaveProperty("_prefix", "sub2");
+      expect(duck).toHaveProperty("_prefixs", ["test"]);
+      expect(duck.ducks.sub1).toHaveProperty("_prefixs", ["test", "sub1"]);
+      expect(duck.ducks.sub2).toHaveProperty("_prefixs", ["test", "sub2"]);
       done();
     });
 
@@ -191,14 +191,16 @@ describe("Class Duck", () => {
     describe("selectors", () => {
       expect(duck).toHaveProperty("selectors");
       it("read state", (done) => {
-        const store = { count: 3 };
+        const store = { test: { count: 3 } };
         const state = duck.selectors(store);
         expect(state).toHaveProperty("count", 3);
         expect(state).toHaveProperty("doubleCount", 6);
         done();
       });
       it("read sub duck state ", (done) => {
-        const store = { count: 3, sub1: { second: 3 }, sub2: { second: 4 } };
+        const store = {
+          test: { count: 3, sub1: { second: 3 }, sub2: { second: 4 } },
+        };
         expect(duck.ducks.sub1.selectors(store).second).toBe(3);
         expect(duck.ducks.sub2.selectors(store).second).toBe(4);
         done();

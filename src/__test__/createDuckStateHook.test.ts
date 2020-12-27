@@ -143,7 +143,7 @@ describe("createDuckStateHook", () => {
 
     describe("useDuckState", () => {
       describe("essential property", () => {
-        const { result } = renderHook(() => useDuckState(TestDuck));
+        const { result } = renderHook(() => useDuckState(TestDuck, "test1"));
         const { dispatch, duck, store } = result.current;
         it("dispatch", (done) => {
           expect(dispatch).toBeInstanceOf(Function);
@@ -157,9 +157,11 @@ describe("createDuckStateHook", () => {
         it("store", (done) => {
           expect(store).toBeInstanceOf(Object);
           expect(store).toStrictEqual({
-            count: 0,
-            sub1: { second: 0 },
-            sub2: { second: 0 },
+            test1: {
+              count: 0,
+              sub1: { second: 0 },
+              sub2: { second: 0 },
+            },
           });
           done();
         });
@@ -168,16 +170,19 @@ describe("createDuckStateHook", () => {
       describe("synchronously", () => {
         it("parent duck", (done) => {
           const { result } = renderHook(() => useDuckState(TestDuck));
-          expect(result.current.store).toHaveProperty("count", 0);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(0);
           act(() => {
             result.current.dispatch(result.current.duck.creators.setCount(1));
           });
-          expect(result.current.store).toHaveProperty("count", 1);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(1);
           done();
         });
         it("sub duck", (done) => {
           const { result } = renderHook(() => useDuckState(TestDuck));
-          expect(result.current.store).toHaveProperty("count", 0);
           act(() => {
             result.current.dispatch(
               result.current.duck.ducks.sub1.creators.setSecond(123)
@@ -186,8 +191,14 @@ describe("createDuckStateHook", () => {
               result.current.duck.ducks.sub2.creators.setSecond(456)
             );
           });
-          expect(result.current.store.sub1).toHaveProperty("second", 123);
-          expect(result.current.store.sub2).toHaveProperty("second", 456);
+          expect(
+            result.current.duck.ducks.sub1.selectors(result.current.store)
+              .second
+          ).toBe(123);
+          expect(
+            result.current.duck.ducks.sub2.selectors(result.current.store)
+              .second
+          ).toBe(456);
           done();
         });
       });
@@ -196,7 +207,9 @@ describe("createDuckStateHook", () => {
           const { result, waitForNextUpdate } = renderHook(() =>
             useDuckState(TestDuck)
           );
-          expect(result.current.store).toHaveProperty("count", 0);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(0);
           act(() => {
             result.current.dispatch({
               type: result.current.duck.types.FETCH_ASYNC_COUNT,
@@ -204,14 +217,23 @@ describe("createDuckStateHook", () => {
             });
           });
           await waitForNextUpdate();
-          expect(result.current.store).toHaveProperty("count", 234);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(234);
           done();
         });
         it("sub duck", async (done) => {
           const { result, waitForNextUpdate } = renderHook(() =>
             useDuckState(TestDuck)
           );
-          expect(result.current.store.sub1).toHaveProperty("second", 0);
+          expect(
+            result.current.duck.ducks.sub1.selectors(result.current.store)
+              .second
+          ).toBe(0);
+          expect(
+            result.current.duck.ducks.sub2.selectors(result.current.store)
+              .second
+          ).toBe(0);
           act(() => {
             result.current.dispatch({
               type: result.current.duck.ducks.sub1.types.FETCH_ASYNC_SECOND,
@@ -223,8 +245,14 @@ describe("createDuckStateHook", () => {
             });
           });
           await waitForNextUpdate();
-          expect(result.current.store.sub1).toHaveProperty("second", 345);
-          expect(result.current.store.sub2).toHaveProperty("second", 567);
+          expect(
+            result.current.duck.ducks.sub1.selectors(result.current.store)
+              .second
+          ).toBe(345);
+          expect(
+            result.current.duck.ducks.sub2.selectors(result.current.store)
+              .second
+          ).toBe(567);
           done();
         });
       });
@@ -232,20 +260,26 @@ describe("createDuckStateHook", () => {
       describe("put effect work well", () => {
         it("synchronously side effect", (done) => {
           const { result } = renderHook(() => useDuckState(TestDuck));
-          expect(result.current.store).toHaveProperty("count", 0);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(0);
           act(() => {
             result.current.dispatch({
               type: result.current.duck.types.SET_COUNT_TO_SEVEN,
             });
           });
-          expect(result.current.store).toHaveProperty("count", 7);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(7);
           done();
         });
         it("asynchronously side effect", async (done) => {
           const { result, waitForNextUpdate } = renderHook(() =>
             useDuckState(TestDuck)
           );
-          expect(result.current.store).toHaveProperty("count", 0);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(0);
           act(() => {
             result.current.dispatch({
               type: result.current.duck.types.FETCH_ASYNC_COUNT,
@@ -253,7 +287,9 @@ describe("createDuckStateHook", () => {
             });
           });
           await waitForNextUpdate();
-          expect(result.current.store).toHaveProperty("count", 123456);
+          expect(
+            result.current.duck.selectors(result.current.store).count
+          ).toBe(123456);
           done();
         });
       });

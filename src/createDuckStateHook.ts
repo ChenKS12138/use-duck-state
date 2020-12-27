@@ -16,57 +16,90 @@ export function createDuckStateHook(
   },
   middlewares?: any[]
 ) {
-  return function useDuckState<TDuck extends Duck>(
-    MyDuck: new (args?: any) => TDuck
-  ): { store: any; dispatch: (action: any) => void; duck: TDuck } {
-    const duckRef = useRef(new MyDuck());
-    const sagaMiddlewareRef = useRef(createSagaMiddleware());
-    const mountedRef = useRef(true);
-
-    const [_, forceUpdate] = useState({});
-    const storeRef = useRef({
-      _state: duckRef.current.initialState,
-      dispatch(action: any) {
-        storeRef.current._state = duckRef.current.reducer(
-          storeRef.current._state,
-          action
-        );
-        if (mountedRef.current) {
-          forceUpdate({});
-        }
-      },
+  const sagaMiddleware = createSagaMiddleware();
+  const globalStore = enhanceStore(
+    {
+      _state: {},
       getState() {
-        return storeRef.current._state;
+        return globalStore._state;
       },
+      reducers: [],
+      _listeners: [],
+      subscribe(listener: any) {
+        globalStore._listeners.push(listener);
+      },
+      unSubscribe(listener: any) {
+        globalStore._listeners = globalStore._listeners.filter(
+          (one: any) => one !== listener
+        );
+      },
+      dispatch(action: any) {
+        const prevState = globalStore._state;
+        globalStore._state = globalStore.reducers.reduce(
+          (accumulate: any, current: any) => {
+            const { namespace, reducer } = current;
+            accumulate[namespace] = reducer(prevState[namespace], action);
+            return accumulate;
+          },
+          {} as any
+        );
+        globalStore._listeners.forEach((listener: any) => {
+          listener();
+        });
+      },
+    },
+    middlewares?.length ? [...middlewares, sagaMiddleware] : [sagaMiddleware]
+  );
+
+  return function useDuckState<TDuck extends Duck>(
+    MyDuck: new (args?: any) => TDuck,
+    namespace?: string
+  ): { store: any; dispatch: (action: any) => void; duck: TDuck } {
+    const namespaceRef = useRef(
+      namespace ?? Math.random().toString(16).slice(2)
+    );
+    const duckRef = useRef(new MyDuck([namespaceRef.current]));
+    const mountedRef = useRef(true);
+    const [_, forceUpdate] = useState({});
+    const listenerRef = useRef(() => {
+      if (mountedRef.current) {
+        forceUpdate({});
+      }
     });
 
     useEffect(() => {
       const tasks = duckRef.current._composeSaga.map((saga: any) => {
-        return sagaMiddlewareRef.current.run(saga);
+        return sagaMiddleware.run(saga);
       });
 
       return () => {
         mountedRef.current = false;
+        globalStore.reducers = globalStore.reducers.filter(
+          (one: any) => one.namespace !== namespaceRef.current
+        );
+        globalStore.unSubscribe(listenerRef.current);
         tasks.forEach((task: any) => {
           task.cancel();
         });
       };
     }, []);
 
-    const nextStore = useMemo(() => {
-      const enhancedStore = enhanceStore(
-        storeRef.current,
-        middlewares?.length
-          ? [sagaMiddlewareRef.current, ...middlewares]
-          : [sagaMiddlewareRef.current]
-      );
-      return enhancedStore;
-    }, [sagaMiddlewareRef, storeRef]);
+    const wrapDispatch = useMemo(() => {
+      globalStore.reducers.push({
+        namespace: namespaceRef.current,
+        reducer: duckRef.current.reducer,
+      });
+      globalStore._state[namespaceRef.current] = duckRef.current.initialState;
+      globalStore.subscribe(listenerRef.current);
+      return (action: any) => {
+        globalStore.dispatch(action);
+      };
+    }, [forceUpdate, mountedRef, globalStore]);
 
     return {
-      store: storeRef.current.getState(),
+      store: globalStore.getState(),
       duck: duckRef.current,
-      dispatch: nextStore.dispatch,
+      dispatch: wrapDispatch,
     };
   };
 }

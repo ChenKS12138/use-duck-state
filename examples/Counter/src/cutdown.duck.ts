@@ -64,7 +64,9 @@ export default class CutdownDuck extends Duck {
           clearInterval(timer);
         }
       }, 1000);
-      return () => {};
+      return () => {
+        return null;
+      };
     });
   }
 }
